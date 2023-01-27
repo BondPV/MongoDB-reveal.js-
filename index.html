@@ -1,40 +1,211 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<link rel="stylesheet" href="dist/reset.css">
-		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/black.css">
+  <title>MongoDB</title>
 
-		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="plugin/highlight/monokai.css">
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
-		</div>
+  <link rel="stylesheet" href="dist/reset.css">
+  <link rel="stylesheet" href="dist/reveal.css">
+  <link rel="stylesheet" href="dist/theme/serif.css">
 
-		<script src="dist/reveal.js"></script>
-		<script src="plugin/notes/notes.js"></script>
-		<script src="plugin/markdown/markdown.js"></script>
-		<script src="plugin/highlight/highlight.js"></script>
-		<script>
-			// More info about initialization & config:
-			// - https://revealjs.com/initialization/
-			// - https://revealjs.com/config/
-			Reveal.initialize({
-				hash: true,
+  <!-- Theme used for syntax highlighted code -->
+  <link rel="stylesheet" href="plugin/highlight/monokai.css">
+</head>
 
-				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
-			});
-		</script>
-	</body>
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section>
+        <img style="border: none; box-shadow: none" src="assets/MongoDB_Fores-Green.svg">
+      </section>
+      <section>
+        <section>
+          <h2>Structure</h2>
+        </section>
+        <section>
+          <h2>Basic Units</h2>
+          <p><b>Database</b> is a container for collections.</p>
+          <p><b>Collection</b> is a group of documents.</p>
+          <p><b>Document</b> is a set of key-value pairs. Documents contain one or more fields.</p>
+          <p><b>Field</b> is a value.</p>
+        </section>
+        <section><img src="assets/basicUnits.jpg" alt="Basic units"></section>
+        <section>
+          <h2>Naming SQL vs. MongoDB</h2>
+          <img src="assets/SQLvsMongoDB.PNG" alt="SQL vs. MongoDB">
+        </section>
+      </section>
+      <section>
+        <section>
+          <h2>Advantages</h2>
+          <ul style="list-style-type: none">
+            <li class="fragment">&#9989; Performance Levels</li>
+            <li class="fragment">&#9989; High Speed and Higher Availability</li>
+            <li class="fragment">&#9989; Simplicity</li>
+            <li class="fragment">&#9989; Easy Environment and a Quick Set-up</li>
+            <li class="fragment">&#9989; Flexibility</li>
+            <li class="fragment">&#9989; Scalability</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Disadvantages</h2>
+          <ul style="list-style-type: none">
+            <li class="fragment">&#10062; Transactions</li>
+            <li class="fragment">&#10062; Joins</li>
+            <li class="fragment">&#10062; Limited Data Size and Nesting</li>
+            <li class="fragment">&#10062; Duplicates</li>
+            <li class="fragment">&#10062; High Memory Usage</li>
+          </ul>
+        </section>
+      </section>
+      <section>
+        <section>
+          <h2>Makes development easy</h2>
+        </section>
+        <section>
+          <h3>Connect</h3>
+          <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+              {
+                import { MongoClient } from 'mongodb'
+
+                export async function connect () {
+                  // Connection URL
+                  const url = 'mongodb://localhost:27017/my_database'
+                
+                  let db
+                
+                  try {
+                    db = await MongoClient.connect(url)
+                    console.log('Connected successfully!')
+                  } catch (err) {
+                    // Handle error
+                  }
+                
+                  return db
+                }
+              }
+            </code></pre>
+          </section>
+          <section>
+            <h3>Insert a document</h3>
+            <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+              export async function insertDocuments (db) {
+                // Get the documents collection
+                const collection = db.collection('restaurants')
+
+                // Insert some documents
+                const result = await collection.insertMany([
+                  {
+                    name: 'Sun Bakery Trattoria',
+                    stars: 4,
+                    categories: [
+                      'Pizza', 'Pasta', 'Italian', 'Coffee', 'Sandwiches'
+                    ]
+                  }, {
+                    name: 'Blue Bagels Grill',
+                    stars: 3,
+                    categories: [
+                      'Bagels', 'Cookies', 'Sandwiches'
+                    ]
+                  }
+                ])
+
+                return result
+              }
+              </code></pre>
+            </section>
+            <section>
+              <h3>Create a query</h3>
+              <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                export async function findDocuments () {
+                  const collection = db.collection('restaurants')
+
+                  const docs = await collection.find({}).toArray()
+
+                  console.log('Found the following records')
+                  console.log(docs)
+
+                  return docs
+                }
+                </code></pre>
+              </section>
+              <section>
+                <h3>Build an index</h3>
+                <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                  export async function indexCollection (db) {
+                    const collection = db.collection('restaurants')
+
+                    const result = await collection.createIndex({
+                      name: 1
+                    })
+
+                    return result
+                  }
+                  </code></pre>
+                </section>
+                <section>
+                  <h3>Aggregate</h3>
+                  <pre data-id="code-animation"><code class="hljs" data-trim data-line-numbers>
+                      export async function aggregateDocuments (db) {
+                        const collection = db.collection('restaurants')
+
+                        const results = await collection.aggregate([
+                          {
+                            $match: {
+                              categories: 'Bakery'
+                            }
+                          }, {
+                            $group: {
+                              _id: '$stars',
+                              count: { $sum: 1 }
+                            }
+                          }
+                        ])
+
+                        return results
+                      }
+                    </code></pre>
+                  </section>
+      </section>
+      <section>
+        <h2>Interesting facts</h2>
+        <ul style="list-style-type: none">
+          <li>&#127775; MongoDB comes from the word <i>hu<b>mongo</b>us</i>.</li>
+          <li>&#127775;Leaf in MongoDB means that coding should be natural, and so should using a database.
+            MongoDB founders want the experience of using MongoDB to be simple and natural. Thus, the leaf.</li>
+        </ul>
+      </section>
+      <section>
+        <h2>Resources</h2>
+        <ul>
+          <li style="list-style-type: none">&#128279;<a href="https://www.mongodb.com/faq" target="_blank">https://www.mongodb.com/faq</a></li>
+          <li style="list-style-type: none">&#128279;<a href="https://www.mongodb.com/docs/drivers/node/current/quick-start/" target="_blank">https://www.mongodb.com/docs/drivers/node/</a></li>
+          <li style="list-style-type: none">&#128279;<a href="https://www.youtube.com/watch?v=7_hcfx2VDWE">NoSQL databases
+            (Vladimir Kuznetsov)</a></li>
+            <li style="list-style-type: none">&#128279;<a href="https://www.youtube.com/watch?v=pGkQ5ApKIUY">MongoDB. Basic Concepts (webDev)</a></li>
+        </ul>
+      </section>
+    </div>
+  </div>
+
+  <script src="dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script>
+    // More info about initialization & config:
+    // - https://revealjs.com/initialization/
+    // - https://revealjs.com/config/
+    Reveal.initialize({
+      hash: true,
+
+      // Learn about plugins: https://revealjs.com/plugins/
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+    });
+  </script>
+</body>
+
 </html>
